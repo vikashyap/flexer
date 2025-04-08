@@ -1,3 +1,4 @@
+import { WalletConnector } from "@/components/app/wallet/connector";
 import { Suspense } from "react";
 import "./App.css";
 
@@ -14,9 +15,11 @@ function App() {
           </p>
         </header>
 
-        <Suspense
-          fallback={<div className="text-center">Loading...</div>}
-        ></Suspense>
+        <Suspense fallback={<div className="text-center">Loading...</div>}>
+          <div className="space-y-8">
+            <WalletConnector />
+          </div>
+        </Suspense>
       </div>
     </main>
   );
