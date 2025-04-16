@@ -15,6 +15,8 @@ interface PortfolioState {
     topTokenMap: TokenMap;
     totalUSD: number;
   };
+  isPortfolioLoading: boolean;
+  setIsPortfolioLoading: (isLoading: boolean) => void;
   setEvmTokenMap: (map: TokenMap) => void;
   updateEvmToken: (key: string, token: Partial<Token>) => void;
   setEvmTopTokenMap: (map: TokenMap) => void;
@@ -41,6 +43,8 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
     topTokenMap: {},
     totalUSD: 0,
   },
+  isPortfolioLoading: false,
+  setIsPortfolioLoading: (isLoading) => set({ isPortfolioLoading: isLoading }),
   setEvmChains: (chains) => set((state) => ({ evm: { ...state.evm, chains } })),
   setEvmTokenMap: (map) =>
     set((state) => ({ evm: { ...state.evm, tokenMap: map } })),

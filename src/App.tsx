@@ -4,6 +4,7 @@ import "./App.css";
 
 import PortfolioSummary from "@/components/app/portfolio/summary";
 import { Tokens } from "@/components/app/portfolio/tokenList";
+import LoadingOverlay from "@/components/base/loadingOverlay";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
 
         <Suspense fallback={<div className="text-center">Loading...</div>}>
           <div className="space-y-8">
+            <LoadingOverlay />
             <WalletConnector />
             <PortfolioSummary />
             <Tokens />

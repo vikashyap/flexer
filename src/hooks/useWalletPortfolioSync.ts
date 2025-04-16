@@ -13,6 +13,7 @@ export const useWalletPortfolioSync = () => {
     topTokenMap,
     chains,
     setEvmTotalUSD,
+    setIsPortfolioLoading,
   } = usePortfolioStore(
     useShallow((state) => ({
       setEvmTokenMap: state.setEvmTokenMap,
@@ -21,6 +22,8 @@ export const useWalletPortfolioSync = () => {
       tokenMap: state.evm.tokenMap,
       topTokenMap: state.evm.topTokenMap,
       chains: state.evm.chains,
+      isPortfolioLoading: state.isPortfolioLoading,
+      setIsPortfolioLoading: state.setIsPortfolioLoading,
     }))
   );
 
@@ -32,26 +35,38 @@ export const useWalletPortfolioSync = () => {
     Object.keys(tokenMap).length > 0 && chains.length > 0;
 
   useEffect(() => {
-    if (Object.keys(topTokenMap).length > 0) {
-      console.log("🔁 Resetting top tokens due to address change/disconnect");
-      resetWalletBalances({
-        tokenMap,
-        topTokenMap,
-        setEvmTokenMap,
-        setEvmTopTokenMap,
-        setEvmTotalUSD,
-      });
-    }
-    if (address && tokenMap && chains) {
-      console.log("Syncing wallet balances...", address);
-      syncWalletBalances({
-        address,
-        tokenMap,
-        chains,
-        setEvmTokenMap,
-        setEvmTopTokenMap,
-        setEvmTotalUSD,
-      });
-    }
+    const sync = async () => {
+      if (!isTokenMapLoaded) return;
+
+      if (Object.keys(topTokenMap).length > 0) {
+        console.log("🔁 Resetting top tokens due to address change/disconnect");
+        resetWalletBalances({
+          tokenMap,
+          topTokenMap,
+          setEvmTokenMap,
+          setEvmTopTokenMap,
+          setEvmTotalUSD,
+        });
+      }
+
+      if (address) {
+        try {
+          setIsPortfolioLoading(true);
+          console.log("🔄 Syncing wallet balances...", address);
+          await syncWalletBalances({
+            address,
+            tokenMap,
+            chains,
+            setEvmTokenMap,
+            setEvmTopTokenMap,
+            setEvmTotalUSD,
+          });
+        } finally {
+          setIsPortfolioLoading(false);
+        }
+      }
+    };
+
+    sync();
   }, [address, isTokenMapLoaded]);
 };
