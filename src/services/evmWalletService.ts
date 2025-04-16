@@ -7,16 +7,17 @@ import {
   getChainId,
   http,
 } from "@wagmi/core";
-import { mainnet, sepolia } from "@wagmi/core/chains";
+import { arbitrumSepolia, sepolia } from "@wagmi/core/chains";
 
-export const allowedChains = [sepolia, mainnet];
+export const allowedChains = [sepolia, arbitrumSepolia];
 
-const wagmiConfig = createConfig({
-  chains: [sepolia, mainnet],
+export const wagmiConfig = createConfig({
+  chains: [arbitrumSepolia],
   connectors: [injected()],
   transports: {
-    [mainnet.id]: http("https://rpc.ankr.com/eth"),
-    [sepolia.id]: http("https://rpc.sepolia.org"),
+    [arbitrumSepolia.id]: http(
+      "https://arb-sepolia.g.alchemy.com/v2/vriLHvVZ78KyULnVq2CwjAqWj1YaLfoM"
+    ),
   },
 });
 
@@ -28,5 +29,5 @@ export const disconnectEvmWallet = () => disconnect(wagmiConfig);
 export const getEvmWalletInfo = async () => {
   const account = getAccount(wagmiConfig);
   const chainId = await getChainId(wagmiConfig);
-  return { address: account.address, chainId };
+  return { account, chainId };
 };

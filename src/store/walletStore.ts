@@ -1,21 +1,30 @@
+import type { GetAccountReturnType as EvmWalletAccount } from "@wagmi/core";
 import { create } from "zustand";
 
 export interface Wallet {
-  // Todo: Move to types.ts and include all wallet properties
   address: string;
   ecosystem: "evm" | "solana";
+  isConnected: boolean;
+  isConnecting: boolean;
 }
 
 interface WalletState {
-  evmWallet: Wallet | null;
+  evmWalletAccount: EvmWalletAccount | null;
   solanaWallet: Wallet | null;
-  setEvmWallet: (wallet: Wallet | null) => void;
+  connectedWalletCount: number;
+  setEvmWalletAccount: (wallet: EvmWalletAccount | null) => void;
   setSolanaWallet: (wallet: Wallet | null) => void;
 }
 
 export const useWalletStore = create<WalletState>((set) => ({
-  evmWallet: null,
+  evmWalletAccount: null,
   solanaWallet: null,
-  setEvmWallet: (wallet) => set({ evmWallet: wallet }),
-  setSolanaWallet: (wallet) => set({ solanaWallet: wallet }),
+  connectedWalletCount: 0,
+  setEvmWalletAccount: (wallet) => {
+    set({ evmWalletAccount: wallet });
+  },
+
+  setSolanaWallet: (wallet) => {
+    set({ solanaWallet: wallet });
+  },
 }));

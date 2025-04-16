@@ -2,6 +2,9 @@ import { WalletConnector } from "@/components/app/wallet/connector";
 import { Suspense } from "react";
 import "./App.css";
 
+import PortfolioSummary from "@/components/app/portfolio/summary";
+import { Tokens } from "@/components/app/portfolio/tokenList";
+
 function App() {
   return (
     <main className="min-h-screen p-4 md:p-8 bg-gradient-to-br from-purple-50 to-pink-50">
@@ -18,6 +21,8 @@ function App() {
         <Suspense fallback={<div className="text-center">Loading...</div>}>
           <div className="space-y-8">
             <WalletConnector />
+            <PortfolioSummary />
+            <Tokens />
           </div>
         </Suspense>
       </div>

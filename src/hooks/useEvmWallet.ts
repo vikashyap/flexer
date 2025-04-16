@@ -1,27 +1,42 @@
 import {
   connectEvmWallet,
   disconnectEvmWallet,
+  getEvmWalletInfo,
 } from "@/services/evmWalletService";
 import { useWalletStore } from "@/store/walletStore";
 
 export const useEvmWallet = () => {
-  const { setEvmWallet } = useWalletStore();
+  // Zustand store to manage EVM wallet state, avoid unnecessary re-renders by using specific selectors
+  const setEvmWallet = useWalletStore((state) => state.setEvmWalletAccount);
 
   const connect = async () => {
-    const connectedEvmWallet = await connectEvmWallet();
-    if (!connectedEvmWallet) {
-      throw new Error("Failed to connect to EVM wallet");
+    try {
+      const connectedEvmWallet = await connectEvmWallet();
+
+      if (!connectedEvmWallet) {
+        throw new Error("Failed to connect to EVM wallet");
+      }
+
+      const { account } = await getEvmWalletInfo();
+      if (!account?.address || !account?.chainId) {
+        throw new Error("Incomplete EVM wallet data");
+      }
+
+      setEvmWallet(account);
+    } catch (error) {
+      console.error("❌ Wallet connection failed:", error);
+      throw error; // or handle with toast/snackbar/alert
     }
-    console.log("Connected EVM wallet:", connectedEvmWallet);
-    setEvmWallet({
-      address: connectedEvmWallet.accounts[0],
-      ecosystem: "evm",
-    });
   };
 
   const disconnect = async () => {
-    await disconnectEvmWallet();
-    setEvmWallet(null);
+    try {
+      await disconnectEvmWallet();
+      setEvmWallet(null);
+    } catch (error) {
+      console.error("❌ Wallet disconnection failed:", error);
+      throw error;
+    }
   };
 
   return { connect, disconnect };
