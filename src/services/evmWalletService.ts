@@ -7,16 +7,14 @@ import {
   getChainId,
   http,
 } from "@wagmi/core";
-import { arbitrumSepolia, sepolia } from "@wagmi/core/chains";
-
-export const allowedChains = [sepolia, arbitrumSepolia];
+import { sepolia } from "@wagmi/core/chains";
 
 export const wagmiConfig = createConfig({
-  chains: [arbitrumSepolia],
+  chains: [sepolia],
   connectors: [injected()],
   transports: {
-    [arbitrumSepolia.id]: http(
-      "https://arb-sepolia.g.alchemy.com/v2/vriLHvVZ78KyULnVq2CwjAqWj1YaLfoM"
+    [sepolia.id]: http(
+      "https://eth-sepolia.g.alchemy.com/v2/vriLHvVZ78KyULnVq2CwjAqWj1YaLfoM"
     ),
   },
 });
