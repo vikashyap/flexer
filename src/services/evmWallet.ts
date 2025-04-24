@@ -1,12 +1,5 @@
 import { injected } from "@wagmi/connectors";
-import {
-  connect,
-  createConfig,
-  disconnect,
-  getAccount,
-  getChainId,
-  http,
-} from "@wagmi/core";
+import { createConfig, http } from "@wagmi/core";
 import { sepolia } from "@wagmi/core/chains";
 
 export const wagmiConfig = createConfig({
@@ -18,14 +11,3 @@ export const wagmiConfig = createConfig({
     ),
   },
 });
-
-export const connectEvmWallet = () =>
-  connect(wagmiConfig, { connector: injected() });
-
-export const disconnectEvmWallet = () => disconnect(wagmiConfig);
-
-export const getEvmWalletInfo = async () => {
-  const account = getAccount(wagmiConfig);
-  const chainId = await getChainId(wagmiConfig);
-  return { account, chainId };
-};

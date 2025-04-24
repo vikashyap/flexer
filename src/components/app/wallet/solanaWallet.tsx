@@ -1,19 +1,11 @@
 import { SOLFLARE_LOGO } from "@/constants";
-import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useWalletStore } from "@/store/walletStore";
+import { WalletName } from "@solana/wallet-adapter-base";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useRef } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { WalletOption } from "./walletOption";
 
 export function SolanaWallets() {
-  const { connect: connectSolana, disconnect: disconnectSolana } =
-    useSolanaWallet();
-  const { address, isConnected } = useWalletStore(
-    useShallow((state) => ({
-      address: state.solanaWallet?.address,
-      isConnected: state.solanaWallet?.isConnected,
-    }))
-  );
+  const { connect, disconnect, select, publicKey, connected } = useWallet();
   const renderCount = useRef<number>(0);
   renderCount.current++;
   console.log("🔁 SoloanWallet Render Count:", renderCount.current);
@@ -24,12 +16,15 @@ export function SolanaWallets() {
       <WalletOption
         name="Solflare"
         icon={SOLFLARE_LOGO}
-        isConnected={!!isConnected}
+        isConnected={!!connected}
         isConnecting={false}
-        onConnect={() => connectSolana()}
-        onDisconnect={() => disconnectSolana()}
+        onConnect={async () => {
+          await select("Solflare" as WalletName);
+          await connect();
+        }}
+        onDisconnect={() => disconnect()}
         disabled={false}
-        address={address}
+        address={publicKey?.toBase58()}
         chainId={undefined}
       />
     </>

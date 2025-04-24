@@ -13,12 +13,14 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/base/tabs";
-import { useInscribeEvm } from "@/hooks/useInscribeEvm";
+import { useInscribeSolana } from "@/hooks/useInscribeSolana";
 import { inscriptionFsmStore } from "@/store/inscriptionFsmStore";
 import { usePortfolioStore } from "@/store/portfolioStore";
-import { useWalletStore } from "@/store/walletStore";
+
+import { useInscribeEvm } from "@/hooks/useInscribeEvm";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
+import { useAccount } from "wagmi";
 import { EvmInscription, SolanaInscription } from "./unifiedInscriptionView";
 
 type Tabs = "evm" | "solana";
@@ -30,21 +32,18 @@ interface DialogIncProps {
 
 const DialogInc = (props: DialogIncProps) => {
   const { open, onOpenChange: setOpen } = props;
-  console.log("DialogInc open", open);
-  const { evmWalletAccount, solanaWallet } = useWalletStore(
-    useShallow((state) => ({
-      evmWalletAccount: state.evmWalletAccount,
-      solanaWallet: state.solanaWallet,
-    }))
-  );
+
+  const { isConnected } = useAccount();
+  const { connected } = useWallet();
   const evmTotalUsd = usePortfolioStore((state) => state.evm.totalUSD);
   const solanaTotalUsd = usePortfolioStore((state) => state.solana.totalUSD);
 
   const [activeTab, setActiveTab] = useState<Tabs>(
-    evmWalletAccount ? "evm" : "solana"
+    isConnected ? "evm" : "solana"
   );
 
   const { startEvmInscription } = useInscribeEvm();
+  const { startSolanaInscription } = useInscribeSolana();
 
   const state = inscriptionFsmStore((s) => s.fsms[activeTab].state);
 
@@ -56,17 +55,16 @@ const DialogInc = (props: DialogIncProps) => {
   };
 
   const canInscribe = (type: Tabs) => {
-    return (
-      (type === "evm" && evmWalletAccount) ||
-      (type === "solana" && solanaWallet)
-    );
+    return (type === "evm" && isConnected) || (type === "solana" && connected);
   };
+  console.log(activeTab);
   return (
     <Dialog
       open={open}
       onOpenChange={() => {
         setOpen(false);
-        reset(activeTab);
+        reset("evm");
+        reset("solana");
       }}
     >
       <DialogContent className="sm:max-w-md">
@@ -93,10 +91,10 @@ const DialogInc = (props: DialogIncProps) => {
             onValueChange={(value) => setActiveTab(value as Tabs)}
           >
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="evm" disabled={!evmWalletAccount}>
+              <TabsTrigger value="evm" disabled={!isConnected}>
                 EVM
               </TabsTrigger>
-              <TabsTrigger value="solana" disabled={!solanaWallet}>
+              <TabsTrigger value="solana" disabled={!connected}>
                 Solana
               </TabsTrigger>
             </TabsList>
@@ -108,7 +106,7 @@ const DialogInc = (props: DialogIncProps) => {
               </div>
               <Button
                 className="cursor-pointer w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                onClick={() => startEvmInscription(evmTotalUsd)}
+                onClick={() => startEvmInscription(solanaTotalUsd)}
                 disabled={isInProgress() || !canInscribe("evm")}
               >
                 {isInProgress() ? "Inscribing..." : "Inscribe on EVM"}
@@ -121,11 +119,11 @@ const DialogInc = (props: DialogIncProps) => {
                 This will inscribe your portfolio value on the Solana Devnet.
               </div>
               <Button
-                className="w-full"
-                onClick={() => () => {}}
+                className="w-full cursor-pointer bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                onClick={() => startSolanaInscription(solanaTotalUsd)}
                 disabled={isInProgress() || !canInscribe("solana")}
               >
-                {isInProgress() ? "Inscribing..." : "Inscribe on Solana"}
+                {isInProgress() ? "Inscribing..." : "Inscribe on Solanaaaa"}
               </Button>
             </TabsContent>
           </Tabs>

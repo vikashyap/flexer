@@ -22,7 +22,7 @@ import { formatCurrency } from "@/lib/utils";
 import { usePortfolioStore } from "@/store/portfolioStore";
 import { Token } from "@/types";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Network } from "lucide-react";
+import { Coins, Network } from "lucide-react";
 import { memo, useMemo, useRef } from "react";
 import { formatEther } from "viem";
 import { useShallow } from "zustand/react/shallow";
@@ -44,17 +44,18 @@ const TokenRow = memo(
               <img
                 src={token.logoURI}
                 alt={token.symbol}
-                className="w-6 h-6 rounded-full flex-shrink-0"
+                className="w-8 h-8 rounded-full flex-shrink-0"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/placeholder.svg";
                 }}
               />
             ) : (
-              <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">
-                {token.symbol.substring(0, 1)}
-              </div>
+              <Coins className="w-6 h- text-yellow-400" />
             )}
-            <div className="truncate">{token.symbol}</div>
+            <div className="flex flex-col min-w-0 items-start">
+              <div className="truncate">{token.symbol}</div>
+              <div className="truncate text-xs text-gray-400">{token.name}</div>
+            </div>
           </div>
         </TableCell>
         <TableCell className="py-3 hidden sm:block">
@@ -62,8 +63,8 @@ const TokenRow = memo(
             {token.chainLogo ? (
               <img
                 src={token.chainLogo}
-                alt={token.chainName}
-                className="w-4 h-4 rounded-full flex-shrink-0"
+                alt={token.chainLogo}
+                className="w-8 h-8 rounded-full flex-shrink-0"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/placeholder.svg";
                 }}
@@ -96,18 +97,20 @@ export function TokenList() {
   usePreloadLifiData();
   useWalletPortfolioSync();
 
-  const { topTokenMap } = usePortfolioStore(
+  const { topTokenMap, solanaTopTokenMap } = usePortfolioStore(
     useShallow((state) => ({
       topTokenMap: state.evm.topTokenMap,
+      solanaTopTokenMap: state.solana.topTokenMap,
     }))
   );
 
   const sortedTokens = useMemo(() => {
-    const sortedTop = Object.entries(topTokenMap).sort(
-      ([, a], [, b]) => (b.balanceUSD ?? 0) - (a.balanceUSD ?? 0)
-    );
+    const sortedTop = Object.entries({
+      ...topTokenMap,
+      ...solanaTopTokenMap,
+    }).sort(([, a], [, b]) => (b.balanceUSD ?? 0) - (a.balanceUSD ?? 0));
     return [...sortedTop];
-  }, [topTokenMap]);
+  }, [solanaTopTokenMap, topTokenMap]);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({

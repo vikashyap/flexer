@@ -1,6 +1,5 @@
-import { solanaConnection } from "@/services/solanaWallet";
 import type { Token } from "@/types";
-import { PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 interface SolanaTokenWithMetadata extends Token {
   isMyBalance: true;
@@ -9,11 +8,21 @@ interface SolanaTokenWithMetadata extends Token {
   balanceUSD: number;
 }
 
-export const syncSolanaBalance = async (
-  address: string,
-  solanaTokenMap: Record<string, Token>,
-  setEvmTotalUSD: (value: number) => void
-): Promise<Record<string, SolanaTokenWithMetadata>> => {
+interface SyncOptions {
+  address: string;
+  solanaTokenMap: Record<string, Token>;
+  setSolanaTopTokenMap: (map: Record<string, Token>) => void;
+  setSolanaTotalUSD: (value: number) => void;
+  connection: Connection;
+}
+
+export const syncSolanaBalance = async ({
+  address,
+  solanaTokenMap,
+  setSolanaTopTokenMap,
+  setSolanaTotalUSD,
+  connection,
+}: SyncOptions): Promise<Record<string, SolanaTokenWithMetadata>> => {
   const result: Record<string, SolanaTokenWithMetadata> = {};
   const pubkey = new PublicKey(address);
 
@@ -27,7 +36,7 @@ export const syncSolanaBalance = async (
 
   try {
     //  Native SOL
-    const lamports = await solanaConnection.getBalance(pubkey);
+    const lamports = await connection.getBalance(pubkey);
     const formatted = lamports / 1e9;
     const balanceUSD = 150 * formatted;
     if (formatted > 0) {
@@ -43,19 +52,18 @@ export const syncSolanaBalance = async (
         balanceFormatted: formatted.toString(),
         balanceUSD,
         chainName: "Solana",
-        chainLogo: "https://cryptologos.cc/logos/solana-sol-logo.png?v=026", // or Jupiter logo if available
-        logoURI: "https://cryptologos.cc/logos/solana-sol-logo.png?v=026",
+        chainLogo:
+          "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png", // or Jupiter logo if available
+        logoURI:
+          "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
         decimals: 9,
       };
     }
 
     //  SPL Tokens
-    const parsed = await solanaConnection.getParsedTokenAccountsByOwner(
-      pubkey,
-      {
-        programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
-      }
-    );
+    const parsed = await connection.getParsedTokenAccountsByOwner(pubkey, {
+      programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+    });
 
     for (const { account } of parsed.value) {
       const info = account.data.parsed.info;
@@ -76,14 +84,15 @@ export const syncSolanaBalance = async (
         balanceRaw: BigInt(amount.amount),
         balanceFormatted: amount.uiAmountString,
         balanceUSD,
+        chainLogo: token.chainLogo ?? token.logoURI,
       };
     }
     const finalTotalUSD = Object.values(result).reduce(
       (sum, token) => sum + (token.balanceUSD ?? 0),
       0
     );
-
-    setEvmTotalUSD(finalTotalUSD);
+    setSolanaTopTokenMap(result);
+    setSolanaTotalUSD(finalTotalUSD);
   } catch (e) {
     console.warn("🔁 Failed to fetch Solana balances:", e);
   }

@@ -11,18 +11,16 @@ interface SyncOptions {
   address: `0x${string}`;
   chains: LifiChain[];
   tokenMap: Record<string, Token>;
-  setEvmTokenMap: (map: Record<string, Token>) => void;
   setEvmTopTokenMap: (map: Record<string, Token>) => void;
   setEvmTotalUSD: (value: number) => void;
 }
 
-const BATCH_SIZE = 200;
+const BATCH_SIZE = 8000;
 
 export const syncEvmBalance = async ({
   address,
   chains,
   tokenMap,
-  setEvmTokenMap,
   setEvmTopTokenMap,
   setEvmTotalUSD,
 }: SyncOptions) => {
@@ -85,6 +83,8 @@ export const syncEvmBalance = async ({
           balanceRaw: nativeBalance,
           balanceFormatted: formatted,
           balanceUSD,
+          chainLogo: tokenMap[key]?.chainLogo ?? chain.logoURI,
+          logoURI: tokenMap[key]?.logoURI ?? chain.nativeToken.logoURI,
         };
 
         replaceData[key] = updatedToken;
@@ -151,18 +151,6 @@ export const syncEvmBalance = async ({
 
   await Promise.allSettled(chainTasks);
 
-  console.time("Merging token balances");
-  const mergedMap: Record<string, Token> = {};
-  for (const key in tokenMap) {
-    if (!replaceData[key]) {
-      mergedMap[key] = tokenMap[key];
-    }
-  }
-  for (const key in replaceData) {
-    mergedMap[key] = replaceData[key];
-  }
-  console.timeEnd("Merging token balances");
-
   const sortedTopTokens = Object.entries(topTokens)
     .sort(([, a], [, b]) => (b.balanceUSD ?? 0) - (a.balanceUSD ?? 0))
     .reduce((acc, [k, v]) => {
@@ -181,8 +169,5 @@ export const syncEvmBalance = async ({
     0
   );
   setEvmTotalUSD(finalTotalUSD);
-
-  setEvmTokenMap(mergedMap);
-
   setEvmTopTokenMap(sortedTopTokens);
 };

@@ -1,14 +1,11 @@
-import { useWalletStore } from "@/store/walletStore";
-import { useShallow } from "zustand/react/shallow";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useAccount } from "wagmi";
+
 export function ConnectedWalletsCount() {
-  const { evmWalletAccount, solanaWallet } = useWalletStore(
-    useShallow((state) => ({
-      evmWalletAccount: state.evmWalletAccount,
-      solanaWallet: state.solanaWallet,
-    }))
-  );
-  const evmConnected = evmWalletAccount?.isConnected ? 1 : 0;
-  const solanaConnected = solanaWallet?.address ? 1 : 0;
+  const { connected } = useWallet();
+  const { isConnected } = useAccount();
+  const evmConnected = isConnected ? 1 : 0;
+  const solanaConnected = connected ? 1 : 0;
   const connectedWalletCount = evmConnected + solanaConnected;
 
   return (
