@@ -2,7 +2,7 @@ import {
   connectEvmWallet,
   disconnectEvmWallet,
   getEvmWalletInfo,
-} from "@/services/evmWalletService";
+} from "@/services/evmWallet";
 import { useWalletStore } from "@/store/walletStore";
 
 export const useEvmWallet = () => {

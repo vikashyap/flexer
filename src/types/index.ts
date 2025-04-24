@@ -34,6 +34,16 @@ export interface LifiChain {
     priceUSD: string;
   };
 }
+export interface SolanaChain {
+  id: number;
+  name: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrl: string;
+}
 
 export interface Token {
   name: string;
@@ -50,7 +60,8 @@ export interface Token {
   chainName?: string;
   chainLogo?: string;
   isNative?: boolean;
-  type?: "native" | "erc20";
+  coinKey?: string;
+  type?: "native" | "erc20" | "spl";
 }
 
 export interface PortfolioResult {

@@ -18,7 +18,7 @@ interface SyncOptions {
 
 const BATCH_SIZE = 200;
 
-export const syncWalletBalances = async ({
+export const syncEvmBalance = async ({
   address,
   chains,
   tokenMap,

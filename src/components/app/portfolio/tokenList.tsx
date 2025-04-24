@@ -96,10 +96,9 @@ export function TokenList() {
   usePreloadLifiData();
   useWalletPortfolioSync();
 
-  const { topTokenMap, tokenMap } = usePortfolioStore(
+  const { topTokenMap } = usePortfolioStore(
     useShallow((state) => ({
       topTokenMap: state.evm.topTokenMap,
-      tokenMap: state.evm.tokenMap,
     }))
   );
 
@@ -107,13 +106,8 @@ export function TokenList() {
     const sortedTop = Object.entries(topTokenMap).sort(
       ([, a], [, b]) => (b.balanceUSD ?? 0) - (a.balanceUSD ?? 0)
     );
-
-    const rest = Object.entries(tokenMap).filter(
-      ([key]) => !(key in topTokenMap)
-    );
-
-    return [...sortedTop, ...rest];
-  }, [topTokenMap, tokenMap]);
+    return [...sortedTop];
+  }, [topTokenMap]);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({

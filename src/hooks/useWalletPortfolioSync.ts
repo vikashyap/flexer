@@ -1,5 +1,6 @@
-import { resetWalletBalances } from "@/services/resetWalletBalancesService";
-import { syncWalletBalances } from "@/services/syncWalletBalancesService";
+import { resetWalletBalances } from "@/services/resetBalance";
+import { syncEvmBalance } from "@/services/syncEvmBalance";
+import { syncSolanaBalance } from "@/services/syncSolanaBalance";
 import { usePortfolioStore } from "@/store/portfolioStore";
 import { useWalletStore } from "@/store/walletStore";
 import { useEffect } from "react";
@@ -10,25 +11,33 @@ export const useWalletPortfolioSync = () => {
     setEvmTokenMap,
     setEvmTopTokenMap,
     tokenMap,
+    solTokenMap,
     topTokenMap,
     chains,
     setEvmTotalUSD,
+    setSolanaTotalUSD,
     setIsPortfolioLoading,
   } = usePortfolioStore(
     useShallow((state) => ({
       setEvmTokenMap: state.setEvmTokenMap,
       setEvmTopTokenMap: state.setEvmTopTokenMap,
       setEvmTotalUSD: state.setEvmTotalUSD,
+      setSolanaTotalUSD: state.setSolanaTotalUSD,
       tokenMap: state.evm.tokenMap,
+      solTokenMap: state.solana.tokenMap,
       topTokenMap: state.evm.topTokenMap,
       chains: state.evm.chains,
+      solonaTokenMap: state.solana.tokenMap,
       isPortfolioLoading: state.isPortfolioLoading,
       setIsPortfolioLoading: state.setIsPortfolioLoading,
     }))
   );
 
-  const address = useWalletStore(
-    useShallow((state) => state.evmWalletAccount?.address)
+  const { evmAddress, solanaAddress } = useWalletStore(
+    useShallow((state) => ({
+      evmAddress: state.evmWalletAccount?.address,
+      solanaAddress: state.solanaWallet?.address,
+    }))
   );
 
   const isTokenMapLoaded =
@@ -49,12 +58,12 @@ export const useWalletPortfolioSync = () => {
         });
       }
 
-      if (address) {
+      if (evmAddress) {
         try {
           setIsPortfolioLoading(true);
-          console.log("🔄 Syncing wallet balances...", address);
-          await syncWalletBalances({
-            address,
+          console.log("🔄 Syncing wallet balances...", evmAddress);
+          await syncEvmBalance({
+            address: evmAddress,
             tokenMap,
             chains,
             setEvmTokenMap,
@@ -65,8 +74,11 @@ export const useWalletPortfolioSync = () => {
           setIsPortfolioLoading(false);
         }
       }
+      if (solanaAddress) {
+        syncSolanaBalance(solanaAddress, solTokenMap, setSolanaTotalUSD);
+      }
     };
 
     sync();
-  }, [address, isTokenMapLoaded]);
+  }, [evmAddress, isTokenMapLoaded, solanaAddress]);
 };

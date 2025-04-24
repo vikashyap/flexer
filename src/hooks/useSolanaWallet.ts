@@ -1,7 +1,7 @@
 import {
   connectSolanaWallet,
   disconnectSolanaWallet,
-} from "@/services/solanaWalletService";
+} from "@/services/solanaWallet";
 import { useWalletStore } from "@/store/walletStore";
 
 export const useSolanaWallet = () => {

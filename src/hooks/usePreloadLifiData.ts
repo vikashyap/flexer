@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 export const usePreloadLifiData = () => {
-  const { setEvmTokenMap, setEvmTopTokenMap, setEvmChains } = usePortfolioStore(
+  const { setEvmTokenMap, setEvmChains, setSolanaTokenMap } = usePortfolioStore(
     useShallow((state) => ({
       setEvmTokenMap: state.setEvmTokenMap,
-      setEvmTopTokenMap: state.setEvmTopTokenMap,
       setEvmChains: state.setEvmChains,
+      setSolanaTokenMap: state.setSolanaTokenMap,
     }))
   );
 
@@ -18,10 +18,10 @@ export const usePreloadLifiData = () => {
     worker.onmessage = (e) => {
       const { type, payload } = e.data;
       if (type === "success") {
-        const { tokenMap, topTokenMap, chains } = payload;
-        setEvmTokenMap(tokenMap);
-        setEvmTopTokenMap(topTokenMap);
+        const { evmTokenMap, chains, solanaTokenMap } = payload;
+        setEvmTokenMap(evmTokenMap);
         setEvmChains(chains);
+        setSolanaTokenMap(solanaTokenMap);
       } else {
         console.error("LIFI preload worker error:", payload);
       }

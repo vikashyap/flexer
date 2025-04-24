@@ -1,4 +1,4 @@
-import { wagmiConfig } from "@/services/evmWalletService";
+import { wagmiConfig } from "@/services/evmWallet";
 import { useWalletStore } from "@/store/walletStore";
 import { ConnectionProvider } from "@solana/wallet-adapter-react"; // or your Solana provider
 import { clusterApiUrl } from "@solana/web3.js";
