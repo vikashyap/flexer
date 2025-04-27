@@ -10,9 +10,6 @@ describe("Main", () => {
       </RootProviders>
     );
 
-    // Now assert something visible on screen.
-    // Example: maybe the App has a heading like "Welcome" or something basic.
-
     expect(screen.getByText(/Flexer/i)).toBeInTheDocument();
   });
 });

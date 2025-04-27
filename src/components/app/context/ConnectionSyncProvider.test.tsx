@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import { Mock, vi } from "vitest";
 
 import { useWalletConnectionStore } from "@/store/walletConnectionStore";
-import { useWallet } from "@solana/wallet-adapter-react"; // also import useConnection
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useAccount } from "wagmi";
 import { ConnectionSyncProvider } from "./connectionSyncProvider";
 

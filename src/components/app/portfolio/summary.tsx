@@ -57,5 +57,3 @@ const WalletConnectionMessage = React.memo(function WalletConnectionMessage() {
     </>
   );
 });
-WalletConnectionMessage.displayName = "WalletConnectionMessage";
-PortfolioSummary.displayName = "PortfolioSummary";

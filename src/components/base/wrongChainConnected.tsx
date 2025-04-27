@@ -10,7 +10,7 @@ import { useAccount } from "wagmi";
 export function WrongChainConnected() {
   const [isLoading, setIsLoading] = useState(false);
   const { chain } = useAccount();
-  console.log("Current chain id:", chain?.id);
+
   const chainId = getChainId(wagmiConfig);
 
   const renderCount = useRef<number>(0);
@@ -26,10 +26,9 @@ export function WrongChainConnected() {
   const handleSwitchNetwork = async () => {
     try {
       setIsLoading(true);
-      // Simulate network switching delay
+
       await switchChain(wagmiConfig, { chainId: sepolia.id });
       console.log("Switched to Sepolia network");
-      // In a real app, you would use: await switchChain(wagmiConfig, { chainId: sepolia.id })
     } catch (error) {
       console.error("Failed to switch network:", error);
     } finally {

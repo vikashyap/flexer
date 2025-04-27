@@ -1,11 +1,14 @@
 import { useWalletConnectionStore } from "@/store/walletConnectionStore";
-import { useState } from "react";
+import { useRef } from "react";
 
 export function ChainBadge() {
-  const [isHovered, setIsHovered] = useState(false);
   const connectedWalletCount = useWalletConnectionStore(
     (state) => state.connectedWalletCount
   );
+
+  const renderCount = useRef<number>(0);
+  renderCount.current++;
+  console.log("🔁 ChainBadge:", renderCount.current);
 
   const isMultichain = connectedWalletCount >= 2;
   const label =
@@ -16,11 +19,7 @@ export function ChainBadge() {
       : "EVM";
 
   return (
-    <div
-      className="inline-flex items-center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="inline-flex items-center">
       <div
         className={`
           relative overflow-hidden px-4 py-1.5 rounded-full text-sm font-medium
@@ -29,14 +28,12 @@ export function ChainBadge() {
           ${
             isMultichain
               ? "bg-gradient-to-r from-purple-600/10 to-pink-500/10 text-purple-700 border-purple-200"
-              : "bg-purple-50 text-purple-700 border-purple-100"
+              : "bg-purple-100 text-purple-700 border-purple-100 shadow-sm"
           }
-          ${isHovered ? "shadow-sm" : ""}
         `}
       >
-        {isHovered && (
-          <div
-            className={`
+        <div
+          className={`
               absolute inset-0 opacity-20
               ${
                 isMultichain
@@ -44,8 +41,7 @@ export function ChainBadge() {
                   : "bg-purple-200"
               }
             `}
-          />
-        )}
+        />
 
         <div className="relative flex items-center">
           <span

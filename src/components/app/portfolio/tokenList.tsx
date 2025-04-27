@@ -96,7 +96,6 @@ export function TokenList() {
                       height: virtualRow.size,
                     }}
                   >
-                    {/* Token */}
                     <div className="flex items-center gap-2 min-w-0">
                       {token.logoURI ? (
                         <img
@@ -119,7 +118,6 @@ export function TokenList() {
                       </div>
                     </div>
 
-                    {/* Chain */}
                     <div className="hidden sm:flex items-center gap-2">
                       {token.chainLogo ? (
                         <img
@@ -133,12 +131,10 @@ export function TokenList() {
                       <span className="truncate">{token.chainName}</span>
                     </div>
 
-                    {/* Balance */}
                     <div className="text-right hidden sm:block">
                       {formatEther(token.balanceRaw ?? 0n)}
                     </div>
 
-                    {/* Value */}
                     <div className="text-right">
                       {formatCurrency(token.balanceUSD ?? 0)}
                     </div>

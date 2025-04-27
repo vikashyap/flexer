@@ -16,7 +16,6 @@ export const formatAddress = (
   )}`;
 };
 
-// Format a number with thousands separators
 export function formatNumber(value: number): string {
   return new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 6,
@@ -24,7 +23,6 @@ export function formatNumber(value: number): string {
   }).format(value);
 }
 
-// Format a currency value
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",

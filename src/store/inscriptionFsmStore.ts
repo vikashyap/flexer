@@ -1,4 +1,3 @@
-// store/inscriptionFsmStore.ts
 import {
   Context,
   Event,

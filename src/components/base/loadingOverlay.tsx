@@ -14,7 +14,7 @@ export default function LoadingOverlay() {
   const isPorfolioLoading = usePortfolioStore(
     (state) => state.isPortfolioLoading
   );
-  if (!isPorfolioLoading) return null; // Don't render anything if not loading
+  if (!isPorfolioLoading) return null;
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 absolute inset-0 z-50">
       <AnimatePresence>
