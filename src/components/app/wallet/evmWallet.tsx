@@ -1,5 +1,5 @@
 import { META_MASK_LOGO } from "@/constants";
-import { wagmiConfig } from "@/services/evmWallet";
+import { wagmiConfig } from "@/lib/wagmiConfig";
 import { connect, disconnect, injected } from "@wagmi/core";
 import { useRef } from "react";
 import { useAccount } from "wagmi";

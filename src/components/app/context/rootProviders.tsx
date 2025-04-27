@@ -1,4 +1,4 @@
-import { wagmiConfig } from "@/services/evmWallet";
+import { wagmiConfig } from "@/lib/wagmiConfig";
 
 import {
   ConnectionProvider,

@@ -5,7 +5,7 @@ import "./App.css";
 import PortfolioSummary from "@/components/app/portfolio/summary";
 import { Tokens } from "@/components/app/portfolio/tokenList";
 import LoadingOverlay from "@/components/base/loadingOverlay";
-import { WrongNetwork } from "@/components/base/WrongNetwork";
+import { WrongChainConnected } from "@/components/base/wrongChainConnected";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
           <div className="space-y-8">
             <LoadingOverlay />
             <WalletConnector />
-            <WrongNetwork />
+            <WrongChainConnected />
             <PortfolioSummary />
             <Tokens />
           </div>

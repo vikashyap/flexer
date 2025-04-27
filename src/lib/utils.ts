@@ -1,28 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Address } from "viem";
-
-/**
- * A utility function to conditionally join Tailwind CSS classes together
- * Uses clsx for conditional class joining and twMerge to properly merge Tailwind classes
- *
- * @param inputs - Class values to be conditionally joined
- * @returns Merged class string
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-/**
- * A utility function to format a given address string
- * It keeps a specified number of characters at the start and end of the address,
- * replacing the middle part with ellipsis if the address is long enough
- *
- * @param address - The address string to format
- * @param prefixLength - Number of characters to keep at the start of the address
- * @param suffixLength - Number of characters to keep at the end of the address
- * @returns Formatted address string
- */
 export const formatAddress = (
   address: Address | string,
   prefixLength = 4,

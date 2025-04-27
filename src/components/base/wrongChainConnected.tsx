@@ -1,5 +1,5 @@
 import { Button } from "@/components/base/button";
-import { wagmiConfig } from "@/services/evmWallet";
+import { wagmiConfig } from "@/lib/wagmiConfig";
 import { getChainId, switchChain } from "@wagmi/core";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { sepolia } from "viem/chains";
 import { useAccount } from "wagmi";
 
-export function WrongNetwork() {
+export function WrongChainConnected() {
   const [isLoading, setIsLoading] = useState(false);
   const { chain } = useAccount();
   console.log("Current chain id:", chain?.id);
