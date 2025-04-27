@@ -14,13 +14,12 @@ import {
   TabsTrigger,
 } from "@/components/base/tabs";
 import { useInscribeSolana } from "@/hooks/useInscribeSolana";
-import { inscriptionFsmStore } from "@/store/inscriptionFsmStore";
+import { useInscriptionFsmStore } from "@/store/inscriptionFsmStore";
 import { usePortfolioStore } from "@/store/portfolioStore";
 
 import { useInscribeEvm } from "@/hooks/useInscribeEvm";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletConnectionStore } from "@/store/walletConnectionStore";
 import { useState } from "react";
-import { useAccount } from "wagmi";
 import { EvmInscription, SolanaInscription } from "./unifiedInscriptionView";
 
 type Tabs = "evm" | "solana";
@@ -33,29 +32,37 @@ interface DialogIncProps {
 const DialogInc = (props: DialogIncProps) => {
   const { open, onOpenChange: setOpen } = props;
 
-  const { isConnected } = useAccount();
-  const { connected } = useWallet();
+  const isEvmConnected = useWalletConnectionStore(
+    (state) => state.isEvmConnected
+  );
+  const isSolanaConnected = useWalletConnectionStore(
+    (state) => state.isSolanaConnected
+  );
+
   const evmTotalUsd = usePortfolioStore((state) => state.evm.totalUSD);
   const solanaTotalUsd = usePortfolioStore((state) => state.solana.totalUSD);
 
   const [activeTab, setActiveTab] = useState<Tabs>(
-    isConnected ? "evm" : "solana"
+    isEvmConnected ? "evm" : "solana"
   );
 
   const { startEvmInscription } = useInscribeEvm();
   const { startSolanaInscription } = useInscribeSolana();
 
-  const state = inscriptionFsmStore((s) => s.fsms[activeTab].state);
+  const state = useInscriptionFsmStore((s) => s.fsms[activeTab].state);
 
   const totalUsdValue = activeTab === "evm" ? evmTotalUsd : solanaTotalUsd;
-  const reset = inscriptionFsmStore((s) => s.reset);
+  const reset = useInscriptionFsmStore((s) => s.reset);
 
   const isInProgress = () => {
     return state !== "idle" && state !== "success" && state !== "error";
   };
 
   const canInscribe = (type: Tabs) => {
-    return (type === "evm" && isConnected) || (type === "solana" && connected);
+    return (
+      (type === "evm" && isEvmConnected) ||
+      (type === "solana" && isSolanaConnected)
+    );
   };
   console.log(activeTab);
   return (
@@ -91,10 +98,10 @@ const DialogInc = (props: DialogIncProps) => {
             onValueChange={(value) => setActiveTab(value as Tabs)}
           >
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="evm" disabled={!isConnected}>
+              <TabsTrigger value="evm" disabled={!isEvmConnected}>
                 EVM
               </TabsTrigger>
-              <TabsTrigger value="solana" disabled={!connected}>
+              <TabsTrigger value="solana" disabled={!isSolanaConnected}>
                 Solana
               </TabsTrigger>
             </TabsList>

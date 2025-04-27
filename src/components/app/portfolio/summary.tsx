@@ -8,11 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/base/card";
-import { useRef } from "react";
+import { useWalletConnectionStore } from "@/store/walletConnectionStore";
+import React, { useRef } from "react";
 import InscriptionButton from "../inscription/button";
 import { PortfolioBalance } from "./balance";
+import { ChainBadge } from "./chainBadge";
 
-export default function PortfolioSummary() {
+const PortfolioSummary = React.memo(function PortfolioSummary() {
   const renderCount = useRef<number>(0);
   renderCount.current++;
   console.log("🔁 PortfolioSummary Render Count:", renderCount.current);
@@ -22,9 +24,10 @@ export default function PortfolioSummary() {
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
           <span>Your Portfolio Value</span>
+          <ChainBadge />
         </CardTitle>
         <CardDescription>
-          Total value of all your tokens across connected wallets
+          <WalletConnectionMessage />
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -35,4 +38,24 @@ export default function PortfolioSummary() {
       </CardFooter>
     </Card>
   );
-}
+});
+
+export default PortfolioSummary;
+
+const WalletConnectionMessage = React.memo(function WalletConnectionMessage() {
+  const isWalletConnected = useWalletConnectionStore(
+    (state) => state.isWalletConnected
+  );
+  console.log("🔁 isWalletConnected:", isWalletConnected);
+  return (
+    <>
+      {!isWalletConnected ? (
+        <span>Connect your EVM or Solana Wallet to see the balance</span>
+      ) : (
+        <span>Total value of all your tokens across connected wallets</span>
+      )}
+    </>
+  );
+});
+WalletConnectionMessage.displayName = "WalletConnectionMessage";
+PortfolioSummary.displayName = "PortfolioSummary";

@@ -96,6 +96,5 @@ export const syncSolanaBalance = async ({
   } catch (e) {
     console.warn("🔁 Failed to fetch Solana balances:", e);
   }
-  console.log(result);
   return result;
 };

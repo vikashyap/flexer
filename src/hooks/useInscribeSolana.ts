@@ -1,4 +1,4 @@
-import { inscriptionFsmStore } from "@/store/inscriptionFsmStore";
+import { useInscriptionFsmStore } from "@/store/inscriptionFsmStore";
 import { createMemoInstruction } from "@solana/spl-memo";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { SystemProgram, Transaction } from "@solana/web3.js";
@@ -8,8 +8,8 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export const useInscribeSolana = () => {
   const { publicKey, sendTransaction, connected } = useWallet();
   const { connection } = useConnection();
-  const send = inscriptionFsmStore((s) => s.send);
-  const reset = inscriptionFsmStore((s) => s.reset);
+  const send = useInscriptionFsmStore((s) => s.send);
+  const reset = useInscriptionFsmStore((s) => s.reset);
 
   const startSolanaInscription = async (value: number) => {
     if (!connected || !publicKey || !sendTransaction) {

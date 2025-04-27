@@ -1,21 +1,24 @@
 import { Button } from "@/components/base/button";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletConnectionStore } from "@/store/walletConnectionStore";
 import { lazy, Suspense, useState } from "react";
-import { useAccount } from "wagmi";
 
 const DialogInc = lazy(() => import("./dialog"));
 
 export default function InscriptionButton() {
   const [open, setOpen] = useState(false);
-  const { isConnected } = useAccount();
-  const { connect } = useWallet();
+  const isEvmConnected = useWalletConnectionStore(
+    (state) => state.isEvmConnected
+  );
+  const isSolanaConnected = useWalletConnectionStore(
+    (state) => state.isSolanaConnected
+  );
 
   return (
     <>
       <Button
         onClick={() => setOpen(true)}
         className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 cursor-pointer"
-        disabled={!isConnected && !connect}
+        disabled={!isEvmConnected && !isSolanaConnected}
       >
         Flex On-Chain
       </Button>

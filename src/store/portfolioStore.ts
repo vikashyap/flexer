@@ -77,7 +77,15 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
       },
     })),
   setEvmTotalUSD: (value) =>
-    set((state) => ({ evm: { ...state.evm, totalUSD: value } })),
+    set((state) => ({
+      evm: {
+        ...state.evm,
+        totalUSD: value,
+        chains: state.evm.chains,
+        tokenMap: state.evm.tokenMap,
+        topTokenMap: state.evm.topTokenMap,
+      },
+    })),
 
   setSolanaTokenMap: (map) =>
     set((state) => ({ solana: { ...state.solana, tokenMap: map } })),

@@ -1,12 +1,17 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useAccount } from "wagmi";
+import { useWalletConnectionStore } from "@/store/walletConnectionStore";
+import { useRef } from "react";
 
 export function ConnectedWalletsCount() {
-  const { connected } = useWallet();
-  const { isConnected } = useAccount();
-  const evmConnected = isConnected ? 1 : 0;
-  const solanaConnected = connected ? 1 : 0;
-  const connectedWalletCount = evmConnected + solanaConnected;
+  const connectedWalletCount = useWalletConnectionStore(
+    (state) => state.connectedWalletCount
+  );
+
+  // code to track render count
+  // This is just for debugging purposes to see how many times the component re-renders
+  // and should not be included in production code
+  const renderCount = useRef<number>(0);
+  renderCount.current++;
+  console.log("🔁 ConnectedWalletsCount:", renderCount.current);
 
   return (
     <div className="flex items-center gap-2">

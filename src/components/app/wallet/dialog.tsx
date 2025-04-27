@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/base/dialog";
+import { useRef } from "react";
 import { EvmWallets } from "./evmWallet";
 import { SolanaWallets } from "./solanaWallet";
 
@@ -17,6 +18,12 @@ export default function WalletDialog({
   open,
   onOpenChange,
 }: WalletDialogProps) {
+  // code to track render count
+  // This is just for debugging purposes to see how many times the component re-renders
+  // and should not be included in production code
+  const renderCount = useRef<number>(0);
+  renderCount.current++;
+  console.log("🔁 WalletDialog:", renderCount.current);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">

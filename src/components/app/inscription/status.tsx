@@ -1,7 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription } from "@/components/base/alert";
-import { inscriptionFsmStore } from "@/store/inscriptionFsmStore";
+import { useInscriptionFsmStore } from "@/store/inscriptionFsmStore";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CheckCircle2,
@@ -23,8 +23,8 @@ export type Tabs = "evm" | "solana";
 
 export const StatusInscription = (props: StatusProps) => {
   const { activeTab } = props;
-  const state = inscriptionFsmStore((s) => s.fsms[activeTab].state);
-  const context = inscriptionFsmStore((s) => s.fsms[activeTab].context);
+  const state = useInscriptionFsmStore((s) => s.fsms[activeTab].state);
+  const context = useInscriptionFsmStore((s) => s.fsms[activeTab].context);
   const [prevState, setPrevState] = useState(state);
 
   // Track state changes for animation

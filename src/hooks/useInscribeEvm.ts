@@ -1,11 +1,8 @@
 import { inscriptionAbi } from "@/abi/inscriptionAbi";
-import { inscriptionFsmStore } from "@/store/inscriptionFsmStore";
+import { useInscriptionFsmStore } from "@/store/inscriptionFsmStore";
+import { useWalletConnectionStore } from "@/store/walletConnectionStore";
 import { useEffect } from "react";
-import {
-  useAccount,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 const Sepolia_Contract = "0xf02e80b7399d3ad11189a109bd64c32eca2b5e36";
 const Sepolia_ChainId = 11155111;
@@ -13,9 +10,10 @@ const Sepolia_ChainId = 11155111;
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const useInscribeEvm = () => {
-  const { address } = useAccount();
-  const send = inscriptionFsmStore((s) => s.send);
-  const reset = inscriptionFsmStore((s) => s.reset);
+  const evmAddress = useWalletConnectionStore((state) => state.evmAddress);
+
+  const send = useInscriptionFsmStore((s) => s.send);
+  const reset = useInscriptionFsmStore((s) => s.reset);
 
   const {
     writeContract,
@@ -37,7 +35,7 @@ export const useInscribeEvm = () => {
     send("evm", {
       type: "START",
       value,
-      walletAddress: address ?? null,
+      walletAddress: evmAddress ?? null,
     });
 
     await wait(1000);
